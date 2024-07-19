@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Calculator</title>
+    <style>
+      body{
+        background-color: black;
+      }
+      button{
+        border:none;
+        height:50px;
+        width:50px;
+        font-size:20px;
+        padding:10px 20px;
+        text-align: center;
+        margin:5px;
+        margin-left:0px;
+        margin-top:0px;
+        color: white;
+        background-color:rgb(51, 51, 51);
+        font-size:25px;
+        border-radius:50%;
+        cursor:pointer;
+      }
+      .clear-btn{  
+        padding:0px;
+        font-size: 15px;
+      }
+      p{
+        color:white;
+        font-style: bold;
+        font-size:30px;
+      }
+      .operator-btn{
+        background-color: rgb(254, 160, 10);
+      }
+    </style>
+
+  </head>
+  <body onkeydown="onkeydownFunction(event)">
+    <div>
+      <p class="js-finalAnswer"></p>
+      <button onclick="checkUserInput(1)"><div>1</div></button>
+      <button onclick="checkUserInput(2)">2</button>
+      <button onclick="checkUserInput(3)">3</button>
+      <button class="operator-btn" onclick="checkUserInput('+')">+</button>
+    </div>
+    <div>
+      <button onclick="checkUserInput(4)">4</button>
+      <button onclick="checkUserInput(5)">5</button>
+      <button onclick="checkUserInput(6)">6</button>
+      <button class="operator-btn" onclick="checkUserInput('-')">-</button>
+    </div>
+    <div>
+      <button onclick="checkUserInput(7)">7</button>
+      <button onclick="checkUserInput(8)">8</button>
+      <button onclick="checkUserInput(9)">9</button>
+      <button class="operator-btn" onclick="checkUserInput('*')">*</button>
+    </div>
+    <div>
+      <button onclick="checkUserInput(0)">0</button>
+      <button onclick="checkUserInput('.')">.</button>
+      <button onclick="calculatingAnswer()">=</button>
+      <button class="operator-btn" onclick="checkUserInput('/')">/</button>
+    </div>
+    <div>
+      <button class="clear-btn" onclick="
+        localStorage.removeItem('firstInput');
+        localStorage.removeItem('secondInput');
+        localStorage.removeItem('operator');
+        localStorage.removeItem('finalAnswer');
+        clearFunction()">Clear</button>
+    </div>
+    
+
+    
+    <script>
+      let firstInput = localStorage.getItem('firstInput') ? JSON.parse(localStorage.getItem('firstInput')) : "";
+      let secondInput = localStorage.getItem('secondInput') ? JSON.parse(localStorage.getItem('secondInput')) : "";
+      let operator = localStorage.getItem('operator') ? JSON.parse(localStorage.getItem('operator')) : ""; 
+      let finalAnswer = localStorage.getItem('finalAnswer') ? JSON.parse(localStorage.getItem('finalAnswer')) : ""; 
+
+      function updateCalculator() {
+        firstInput = localStorage.getItem('firstInput') ? JSON.parse(localStorage.getItem('firstInput')) : "";
+        secondInput = localStorage.getItem('secondInput') ? JSON.parse(localStorage.getItem('secondInput')) : "";
+        operator = localStorage.getItem('operator') ? JSON.parse(localStorage.getItem('operator')) : "";
+        finalAnswer = localStorage.getItem('finalAnswer') ? JSON.parse(localStorage.getItem('finalAnswer')) : "";   
+      }
+      
+
+      function clearFunction(){
+        firstInput="";
+        secondInput="";
+        operator=""
+        finalAnswer="";
+        updateCalculator();
+        updateLocalStorage();
+        document.querySelector('.js-finalAnswer').innerHTML='';
+      }
+
+      function checkUserInput(userInput){
+        updateCalculator();
+
+        if(userInput==='+'||userInput==='-'||userInput==='*'||userInput==='/'){
+          operator=userInput;
+        }
+        else{
+          if (operator===''){
+            firstInput+=userInput;
+          }
+          else{
+            secondInput+=userInput;
+          }
+        }
+        updateLocalStorage();
+        document.querySelector('.js-finalAnswer').innerHTML=`${firstInput} ${operator} ${secondInput}`;        
+      }
+
+      function calculatingAnswer(){
+        if(firstInput===''||secondInput===''||operator===''){
+          return;
+        }
+        if (operator === '+') {
+          finalAnswer = Number(firstInput) + Number(secondInput);
+        } 
+        else if (operator === '-') {
+          finalAnswer = Number(firstInput) - Number(secondInput);
+        } 
+        else if (operator === '*') {
+          finalAnswer = Number(firstInput) * Number(secondInput);
+        } 
+        else if (operator === '/') {
+          finalAnswer = Number(firstInput) / Number(secondInput);
+        }
+        updateLocalStorage();
+        document.querySelector('.js-finalAnswer').innerHTML=`${finalAnswer}`;
+        updateCalculator();
+      }
+      
+      function updateLocalStorage(){
+        localStorage.setItem('firstInput', JSON.stringify(firstInput));
+        localStorage.setItem('secondInput', JSON.stringify(secondInput));
+        localStorage.setItem('operator', JSON.stringify(operator));
+        localStorage.setItem('finalAnswer', JSON.stringify(finalAnswer));
+      }
+
+      function onkeydownFunction(event){
+        const key=event.key;
+        if((key>='0'&& key<='9')||key==='+'||key==='-'||key==='*'||key==='/'||key==='.'){
+          checkUserInput(key);
+        }
+        else if (key === 'Enter' || key === '=') {
+            calculatingAnswer();
+        }
+        else if(key==='c'||key==='C'){
+          localStorage.removeItem('firstInput');
+          localStorage.removeItem('secondInput');
+          localStorage.removeItem('operator');
+          localStorage.removeItem('finalAnswer');
+          clearFunction();
+        }
+      }
+      
+      
+      
+    </script>
+  </body>
+</html>
